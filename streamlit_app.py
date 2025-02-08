@@ -7,6 +7,8 @@ if "data" not in st.session_state:
     st.session_state.data = None
 if "pages" not in st.session_state:
     st.session_state.pages = {}
+if "files" not in st.session_state:
+    st.session_state.files = []
 
 upload_page = st.Page("pages/upload_page.py", title="Nahrání souborů")
 summary_page = st.Page("pages/summary_page.py", title="Přehled")

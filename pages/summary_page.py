@@ -33,16 +33,7 @@ else:
     st.session_state.product = option_dynamic if option_dynamic else option_stable
     st.switch_page(st.session_state.pages["product"])
     
-  
-  
-  # st.write("Produkty s měnícím se stavem zásob")
-  # for product in dynamic_products:
-  #   id += 1
-  #   if st.button(product, key=id):
-  #     st.session_state.product = product
 
-  # st.write("Produkty se stálým stavem zásob")
-  # for product in stable_products:
-  #   id += 1
-  #   if st.button(product, key=id):
-  #     st.session_state.product = product
+st.header("Nahrané soubory:")
+for file in st.session_state.files:
+  st.write(f"**{file.name}**")
