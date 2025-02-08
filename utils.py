@@ -29,24 +29,33 @@ def process_product_data(files):
             product_name = row[0]
             material = row[1]
             factory = row[2]
+            product_key = f"{product_name}-{material}-{factory}"
+            date_key = f"{file['day']}/{file['month']}/{file['year']}"
             
-            column_names = ["Součet z Skladem", "Součet z Volně použitelná", "Součet z Příjde na sklad", "Součet z Neuvolněno", "Součet z Otevřené zakázky", "Součet z Blokováno", "Součet z V kontrole jakosti", "Součet z Pojistná zásoba", "Součet z Objednávky SK 4500xxx"]
-            for col_name, value in zip(column_names, row[3:]):
-                product_data[f"{product_name}-{material}-{factory}"][col_name].append((f"{file['day']}/{file['month']}/{file['year']}", value))
-    
+            column_names = ["Součet z Skladem", "Součet z Volně použitelná", "Součet z Příjde na sklad", "Součet z Otevřené zakázky"]
+            for col_name, value in zip(column_names, row[[3, 4, 5, 7]]):
+                product_data[product_key][col_name].append((date_key, value))
+
+    for p_key, p_value in product_data.items():
+        # st.write(p_key)
+        # st.write(p_value)
+        day, prev_val = p_value["Součet z Skladem"][0]
+        prev_sale = 0
+        p_value["Prodej"].append((day, prev_sale))
+        if len(p_value["Součet z Skladem"]) > 1:            
+            for day, value in p_value["Součet z Skladem"][1:]:
+                # st.write({day: value})
+                if value < prev_val:
+                    prev_sale = prev_sale + prev_val - value
+                p_value["Prodej"].append((day, prev_sale))
+                prev_val = value
+        
+        # st.write(p_value["Prodej"])
+        # break
+                
     return product_data
 
-def plot_product_data(product, data):    
-    # fig = plt.figure(figsize=(10, 3))
-    fig = plt.figure()
-    for column, values in data.items():
-        # print(column, values)
-        dates, y_values = zip(*values)
-        plt.plot(dates, y_values, label=column)
-    plt.title(f"{product}")
-    plt.xlabel("Datum")
-    plt.ylabel("Počet")
-    plt.legend(bbox_to_anchor=(0.5,0), loc='upper left')
-    plt.tight_layout()
-    st.pyplot(fig)
-    plt.close()
+def plot_product_data(product, data):
+    dates = [date for date, _ in data[list(data.keys())[0]]]
+    df = pd.DataFrame({column: [value for _, value in values] for column, values in data.items()}, index=dates)
+    st.line_chart(df)
