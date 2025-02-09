@@ -30,7 +30,7 @@ else:
     st.session_state.product = f"{product["Produkt"]}-{product['Materiál']}-{product['Závod']}"
     st.switch_page("pages/product_page.py")
 
-st.write("Pro detail produktu zaškrtněte řádek v levém políčku.")
+  st.write("Pro detail produktu zaškrtněte řádek v levém políčku.")
 
 st.header("Nahrané soubory:")
 for file in st.session_state.files:
